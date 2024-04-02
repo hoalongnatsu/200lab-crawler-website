@@ -2,6 +2,7 @@ name: CI
 
 # Cancel previous runs that are not completed
 concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
   cancel-in-progress: true
 
 on:
