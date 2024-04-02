@@ -28,23 +28,13 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Compose short SHA
-        run: |
-          SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-7`
-          echo "SHORT_SHA=$SHORT_SHA" >> "$GITHUB_ENV"
-
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: 080196/crawler-website
           tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{raw}},prefix=,suffix=
-          flavor: |
-            latest=false
-            suffix=-${{ env.SHORT_SHA }}
+            type=raw,value={{date 'YYYY-MM-DD'}}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
