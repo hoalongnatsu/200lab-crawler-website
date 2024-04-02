@@ -33,8 +33,9 @@ jobs:
         with:
           images: 080196/crawler-website
           tags: |
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{raw}},prefix=,suffix=
+          flavor: |
+            latest=true
 
       - name: Deploy
         uses: appleboy/ssh-action@v1.0.3
