@@ -32,13 +32,6 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: 080196/crawler-website
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{raw}},prefix=,suffix=
-          flavor: |
-            latest=false
-            suffix=-${{ env.SHORT_SHA }}
 
       - name: Deploy
         uses: appleboy/ssh-action@v1.0.3
