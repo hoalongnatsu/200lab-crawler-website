@@ -27,31 +27,29 @@ jobs:
           SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-7`
           echo "SHORT_SHA=$SHORT_SHA" >> "$GITHUB_ENV"
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: 080196/crawler-website
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{raw}},prefix=,suffix=
-          flavor: |
-            latest=false
-            suffix=-${{ env.SHORT_SHA }}
-
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh/
-          echo "${{ secrets.SSH_PRIV_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
-
       - name: Deploy
-        run: |
-          rsync -avz deploy.sh ubuntu@${{ secrets.HOST }}:/home/ubuntu/crawler-demo/deploy.sh --delete --force
-          ssh ubuntu@${{ secrets.HOST }} <<EOF
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIV_KEY }}
+          port: 22
+          script: |
             cd /home/ubuntu/crawler-demo
-            sudo chmod +x deploy.sh
             sh deploy.sh 080196/crawler-website ${{ steps.meta.outputs.tags }}
-          EOF
+
+      # - name: Setup SSH
+      #   run: |
+      #     mkdir -p ~/.ssh/
+      #     echo "${{ secrets.SSH_PRIV_KEY }}" > ~/.ssh/id_rsa
+      #     chmod 600 ~/.ssh/id_rsa
+      #     ssh-keyscan -H ${{ secrets.IP }} >> ~/.ssh/known_hosts
+
+      # - name: Deploy
+      #   run: |
+      #     rsync -avz -e deploy.sh ubuntu@${{ secrets.USER_IP }}:/home/ubuntu/crawler-demo/deploy.sh --delete --force
+      #     ssh ubuntu@${{ secrets.USER_IP }} <<EOF
+      #       cd /home/ubuntu/crawler-demo
+      #       sudo chmod +x deploy.sh
+      #       sh deploy.sh 080196/crawler-website ${{ env.SHORT_SHA }}
+      #     EOF
