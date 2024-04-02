@@ -49,7 +49,7 @@ jobs:
 
       - name: Deploy
         run: |
-          rsync -avz -e deploy.sh ubuntu@${{ secrets.HOST }}:/home/ubuntu/crawler-demo/deploy.sh --delete --force
+          rsync -avz deploy.sh ubuntu@${{ secrets.HOST }}:/home/ubuntu/crawler-demo/deploy.sh --delete --force
           ssh ubuntu@${{ secrets.HOST }} <<EOF
             cd /home/ubuntu/crawler-demo
             sudo chmod +x deploy.sh
