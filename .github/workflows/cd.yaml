@@ -33,7 +33,6 @@ jobs:
         with:
           images: 080196/crawler-website
           tags: |
-            type=ref,event=branch
             type=ref,event=pr
 
       - name: Deploy
