@@ -27,6 +27,19 @@ jobs:
           SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-7`
           echo "SHORT_SHA=$SHORT_SHA" >> "$GITHUB_ENV"
 
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: 080196/crawler-website
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{raw}},prefix=,suffix=
+          flavor: |
+            latest=false
+            suffix=-${{ env.SHORT_SHA }}
+
       - name: Deploy
         uses: appleboy/ssh-action@v1.0.3
         with:
